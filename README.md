@@ -32,7 +32,8 @@ Before answering the questions, I opened the capture and reviewed the overall tr
 
 The Endpoints window (IPv4 tab) shows two hosts: `24.49.63.79` (web server) and `117.11.88.124` (attacker), each exchanging 355 packets. The external address `117.11.88.124` is the IP to investigate.
 
-<img width="600" height="300" alt="Wireshark Endpoints window IPv4 tab showing the two hosts" src="SCREENSHOT_1_URL" />
+<img width="809" height="446" alt="image" src="https://github.com/user-attachments/assets/f5485773-e137-4ab8-bdc1-a05dffe405dc" />
+
 
 *Ref 1: Endpoints window (IPv4 tab) identifying the web server and attacker*
 
@@ -66,7 +67,8 @@ Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0
 
 This indicates the attacker was operating from a Linux host and running Mozilla Firefox 115.
 
-<img width="600" height="300" alt="HTTP stream showing the attacker User-Agent string" src="SCREENSHOT_3_URL" />
+<img width="974" height="394" alt="image" src="https://github.com/user-attachments/assets/2a68bbc0-ee14-4341-9619-01c9e3596fe2" />
+
 
 *Ref 3: Follow HTTP Stream revealing the attacker's User-Agent*
 
@@ -76,13 +78,15 @@ This indicates the attacker was operating from a Linux host and running Mozilla 
 
 This task required determining whether any vulnerabilities were exploited and the name of the malicious web shell that was successfully uploaded. I applied the display filter `http.request.method == POST` to find requests using the POST method, then right-clicked the captures to follow the HTTP streams and trace the POST requests.
 
-<img width="600" height="300" alt="Wireshark filtered on http.request.method == POST" src="SCREENSHOT_4_URL" />
+<img width="975" height="441" alt="image" src="https://github.com/user-attachments/assets/478e85ce-eacd-4bf6-a76e-3f8cab98bea4" />
+
 
 *Ref 4: Filtering for POST requests*
 
 On the HTTP stream, I confirmed the file was successfully uploaded to the server. The uploaded file is `image.jpg.php`. This file bypassed the security check and was successfully uploaded because `.jpg` was appended to the filename, making it difficult to detect (a double-extension bypass).
 
-<img width="600" height="300" alt="HTTP stream showing image.jpg.php uploaded successfully" src="SCREENSHOT_5_URL" />
+<img width="967" height="438" alt="image" src="https://github.com/user-attachments/assets/c2a37358-7d95-447e-b898-d4753b6d94dc" />
+
 
 *Ref 5: HTTP stream confirming the image.jpg.php web shell upload*
 
@@ -92,7 +96,8 @@ On the HTTP stream, I confirmed the file was successfully uploaded to the server
 
 The aim was to identify the directory where the uploaded `image.jpg.php` file is stored, which is important for locating the vulnerable page and removing any malicious files. I reused the POST filter to find the request with the POST method.
 
-<img width="600" height="300" alt="POST filter used again to locate the upload request" src="SCREENSHOT_6_URL" />
+<img width="975" height="441" alt="image" src="https://github.com/user-attachments/assets/c31b2080-d621-4069-8bbf-12bcbccde073" />
+
 
 *Ref 6: Re-applying the POST filter*
 
@@ -102,13 +107,15 @@ Then I filtered for the packet with the uploaded file using:
 http.request.uri contains "image.jpg.php"
 ```
 
-<img width="600" height="300" alt="Filter http.request.uri contains image.jpg.php" src="SCREENSHOT_7_URL" />
+<img width="975" height="429" alt="image" src="https://github.com/user-attachments/assets/51b997f5-bc05-462a-aa58-31f582f84814" />
+
 
 *Ref 7: Filtering for the uploaded file by URI*
 
 Right-clicking, selecting **Follow**, and then **HTTP Stream** reveals the directory the application writes uploads into: `/reviews/uploads/`. This is the location that must be cleaned up during remediation.
 
-<img width="600" height="300" alt="HTTP stream revealing the /reviews/uploads/ directory" src="SCREENSHOT_8_URL" />
+<img width="975" height="514" alt="image" src="https://github.com/user-attachments/assets/785ad6f1-41f1-4763-a869-60961f94b12c" />
+
 
 *Ref 8: HTTP stream revealing the upload directory /reviews/uploads/*
 
@@ -118,7 +125,8 @@ Right-clicking, selecting **Follow**, and then **HTTP Stream** reveals the direc
 
 This task required finding the port targeted by the malicious web shell for establishing unauthorized outbound communication. I filtered for the POST request method and followed the HTTP stream, which revealed that the targeted port is **8080**.
 
-<img width="600" height="300" alt="HTTP stream revealing target port 8080" src="SCREENSHOT_9_URL" />
+<img width="975" height="444" alt="image" src="https://github.com/user-attachments/assets/196c7d10-d75c-4323-87b0-afddeb7914c0" />
+
 
 *Ref 9: HTTP stream revealing the targeted port 8080*
 
@@ -134,7 +142,8 @@ Identifying the importance of the compromised data helps in prioritization durin
 
 Since the attacker targeted port 8080 of the server, I right-clicked the first highlighted packet on port 8080 to select **Follow** and then **TCP Stream**.
 
-<img width="600" height="300" alt="Filtering on tcp.port 8080 from the server and following the TCP stream" src="SCREENSHOT_10_URL" />
+<img width="934" height="362" alt="image" src="https://github.com/user-attachments/assets/faba154b-0c91-4ee2-b4d0-6c941add231c" />
+
 
 *Ref 10: Filtering port 8080 traffic and following the TCP stream*
 
