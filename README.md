@@ -172,5 +172,3 @@ Based on the Indicators of Compromise recovered above:
 5. **Restrict egress traffic** so the web server cannot make arbitrary outbound connections on ports such as 8080 and 443.
 
 ---
-
-> **Note to verify before publishing:** the outbound-port finding is worth double-checking for consistency. Task 5 describes the targeted port as **8080** (the server-side port the web shell communicated on), while the Analysis Summary lists the outbound port as **443** (the attacker's listener that received `/etc/passwd`). These describe two different ends of the same exfiltration, so confirm which port the challenge question is actually asking for and make the wording consistent between Task 5 and the summary table.
